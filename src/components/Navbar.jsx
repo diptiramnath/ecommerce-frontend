@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import "../styles/navbar.css"; // 🔥 IMPORTANT
 
 function Navbar() {
   const [userId, setUserId] = useState(null);
@@ -13,84 +14,60 @@ function Navbar() {
     window.location.href = "/login";
   };
 
+  const navbar = {
+  position: "sticky",
+  top: 0,
+  zIndex: 1000,
+  background: "#0f172a" // or your navbar color
+};
+
   return (
-    <div style={{
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      padding: "15px 30px",
-      background: "linear-gradient(90deg, #0f172a, #1e293b)",
-      color: "white",
-      boxShadow: "0 2px 10px rgba(0,0,0,0.3)"
-    }}>
-      
+    <div className="navbar">
+
       {/* LOGO */}
       <h2
-        style={{
-          cursor: "pointer",
-          margin: 0
-        }}
+        className="logo2"
         onClick={() => (window.location.href = "/")}
       >
-        🛒 Arvind's kutti kadai
+        🛒 Arvind's kutty kadai
       </h2>
 
       {/* NAV LINKS */}
-      <div style={{ display: "flex", gap: "15px" }}>
-        
-        <button style={btnStyle} onClick={() => window.location.href = "/"}>
+      <div className="nav-links">
+
+        <button onClick={() => window.location.href = "/"} className="nav-btn">
           Home
         </button>
 
-        <button style={btnStyle} onClick={() => window.location.href = "/cart"}>
+        <button onClick={() => window.location.href = "/cart"} className="nav-btn">
           Cart
         </button>
 
-        {/* 🔥 NEW ORDERS BUTTON */}
         {userId && (
-          <button
-            style={btnStyle}
-            onClick={() => window.location.href = "/orders"}
-          >
-            📦 Orders
+          <button onClick={() => window.location.href = "/orders"} className="nav-btn">
+            Orders
           </button>
         )}
 
         {!userId ? (
           <>
-            <button style={btnStyle} onClick={() => window.location.href = "/login"}>
+            <button onClick={() => window.location.href = "/login"} className="nav-btn">
               Login
             </button>
 
-            <button style={btnStyle} onClick={() => window.location.href = "/register"}>
+            <button onClick={() => window.location.href = "/register"} className="nav-btn outline">
               Register
             </button>
           </>
         ) : (
-          <button style={logoutStyle} onClick={logout}>
+          <button onClick={logout} className="nav-btn logout">
             Logout
           </button>
         )}
+
       </div>
     </div>
   );
 }
-
-// 🎨 BUTTON STYLE
-const btnStyle = {
-  padding: "8px 14px",
-  backgroundColor: "#334155",
-  color: "white",
-  border: "none",
-  borderRadius: "6px",
-  cursor: "pointer",
-  transition: "0.2s"
-};
-
-// 🔴 LOGOUT STYLE
-const logoutStyle = {
-  ...btnStyle,
-  backgroundColor: "#ef4444"
-};
 
 export default Navbar;

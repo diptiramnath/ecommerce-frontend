@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getCart, removeFromCart, placeOrder } from "../services/api";
+import { getCart, removeFromCart, placeOrder, updateQuantity } from "../services/api";
 
 function Cart() {
   const [cart, setCart] = useState(null);
@@ -23,114 +23,171 @@ function Cart() {
     loadCart();
   };
 
+  const handleIncrease = (productId, qty) => {
+  updateQuantity(userId, productId, qty + 1).then(loadCart);
+};
+
+const handleDecrease = (productId, qty) => {
+  if (qty === 1) return;
+  updateQuantity(userId, productId, qty - 1).then(loadCart);
+};
+
   const total = cart?.products?.reduce((sum, p) => sum + p.price * p.quantity, 0);
 
   return (
-    <div style={page}>
-      <h1 style={{ textAlign: "center" }}>🛒 Your Cart</h1>
+  <div style={page}>
+    <h1 style={title}>Your Cart</h1>
 
-      {cart?.products?.map(p => (
-        <div key={p.productId} style={card}>
-          <img src={p.imageUrl} style={img} />
+    <div style={container}>
+      <div style={cartSection}>
+        {cart?.products?.map(p => (
+          <div key={p.productId} style={card}>
+            <div style={imgContainer}>
+              <img src={p.imageUrl} style={img} />
+            </div>
 
-          <div>
-            <h3>{p.name}</h3>
-            <p>₹ {p.price}</p>
+            <div style={details}>
+              <h3 style={productName}>{p.name}</h3>
+              <p style={price}>₹ {p.price}</p>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <button onClick={() => handleDecrease(p.productId, p.quantity)} style={qtyBtn}>-</button>
 
-            <button onClick={() => handleRemove(p.productId)} style={dangerBtn}>
-              Remove
-            </button>
+                  <span>{p.quantity}</span>
+
+                  <button onClick={() => handleIncrease(p.productId, p.quantity)} style={qtyBtn}>+</button>
+              </div>
+
+              <button onClick={() => handleRemove(p.productId)} style={dangerBtn}>
+                Remove
+              </button>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
 
-      <h2>Total: ₹ {total}</h2>
+      <div style={summary}>
+        <h2 style={{ marginBottom: "20px", color: "black" }}>Order Summary</h2>
+        <p style={totalText}>Total: ₹ {total}</p>
 
-      <button onClick={handleOrder} style={primaryBtn}>
-        Place Order
-      </button>
+        <button onClick={handleOrder} style={primaryBtn}>
+          Place Order
+        </button>
+      </div>
     </div>
-  );
+  </div>
+);
 }
 
 export default Cart;
+
 const page = {
-  padding: "20px",
-  background: "#f8fafc",
-  minHeight: "100vh"
+  padding: "30px",
+  background: "#f1f5f9", // light grey background
+  minHeight: "100vh",
+  color: "#0f172a" // dark text
+};
+
+const title = {
+  textAlign: "center",
+  marginBottom: "30px",
+  fontSize: "32px",
+  fontWeight: "bold",
+  color: "#0f172a"
+};
+
+const container = {
+  display: "flex",
+  gap: "30px",
+  alignItems: "flex-start"
+};
+
+const cartSection = {
+  flex: 2
 };
 
 const card = {
   display: "flex",
   gap: "20px",
   padding: "15px",
-  background: "white",
-  borderRadius: "10px",
-  marginBottom: "15px",
-  boxShadow: "0 2px 10px rgba(0,0,0,0.1)"
+  background: "#ffffff", // white cards like screenshot
+  borderRadius: "12px",
+  marginBottom: "20px",
+  alignItems: "center",
+  boxShadow: "0 2px 8px rgba(0,0,0,0.08)" // soft shadow
 };
 
-const orderCard = {
-  background: "white",
-  padding: "20px",
-  borderRadius: "10px",
-  marginBottom: "20px"
-};
-
-const productRow = {
+const details = {
   display: "flex",
-  gap: "10px",
-  marginTop: "10px"
+  flexDirection: "column",
+  gap: "10px"
+};
+
+const productName = {
+  margin: 0,
+  fontSize: "18px",
+  color: "#0f172a"
+};
+
+const price = {
+  color: "#111827", // dark grey/black like screenshot
+  fontWeight: "600"
 };
 
 const img = {
   width: "120px",
-  borderRadius: "8px"
+  height: "120px",
+  objectFit: "cover",
+  borderRadius: "10px"
 };
 
-const imgSmall = {
-  width: "60px",
-  borderRadius: "6px"
+const summary = {
+  flex: 1,
+  background: "#ffffff",
+  padding: "20px",
+  borderRadius: "12px",
+  boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+  position: "sticky",
+  top: "20px"
+};
+
+const totalText = {
+  fontSize: "20px",
+  fontWeight: "bold",
+  marginBottom: "20px",
+  color: "#0f172a"
 };
 
 const primaryBtn = {
-  padding: "10px",
-  background: "#22c55e",
+  padding: "12px",
+  background: "#22c55e", // same green as your products page
   color: "white",
   border: "none",
   borderRadius: "6px",
-  cursor: "pointer"
+  cursor: "pointer",
+  width: "100%",
+  fontSize: "15px",
+  fontWeight: "600"
 };
 
 const dangerBtn = {
-  padding: "8px",
-  background: "#ef4444",
+  padding: "8px 12px",
+  background: "#ef4444", // same red as logout button vibe
   color: "white",
   border: "none",
   borderRadius: "6px",
-  cursor: "pointer"
+  cursor: "pointer",
+  width: "fit-content"
 };
 
-const authPage = {
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  height: "100vh",
-  background: "#0f172a"
+const imgContainer = {
+  paddingRight: "15px",
+  borderRight: "1px solid #e5e7eb" // subtle divider like your UI
 };
 
-const authCard = {
+const qtyBtn = {
+  padding: "5px 10px",
+  border: "1px solid #ccc",
   background: "white",
-  padding: "30px",
-  borderRadius: "10px",
-  width: "300px",
-  textAlign: "center"
-};
-
-const input = {
-  width: "100%",
-  padding: "10px",
-  margin: "10px 0",
-  borderRadius: "6px",
-  border: "1px solid #ccc"
+  cursor: "pointer",
+  borderRadius: "4px"
 };

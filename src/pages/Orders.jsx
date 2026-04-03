@@ -16,111 +16,127 @@ function Orders() {
   };
 
   return (
-    <div style={page}>
-      <h1 style={{ textAlign: "center" }}>📦 Your Orders</h1>
+  <div style={page}>
+    <h1 style={title}>📦 Your Orders</h1>
 
+    <div style={ordersContainer}>
       {orders.map((order, i) => (
         <div key={i} style={orderCard}>
-          <h3>Order #{i + 1}</h3>
+          
+          <div style={orderHeader}>
+            <h3 style={{ margin: 0 }}>Order #{i + 1}</h3>
 
-          <button onClick={() => handleDelete(order.id || order._id)} style={dangerBtn}>
-            Delete
-          </button>
+            <button
+              onClick={() => handleDelete(order.id || order._id)}
+              style={dangerBtn}
+            >
+              Delete
+            </button>
+          </div>
+
+          <div style={divider}></div>
 
           {order.products.map((p, j) => (
             <div key={j} style={productRow}>
-              <img src={p.imageUrl} style={imgSmall} />
-              <div>
-                <h4>{p.name}</h4>
-                <p>₹ {p.price}</p>
+              <div style={imgContainer}>
+                <img src={p.imageUrl} style={imgSmall} />
+              </div>
+
+              <div style={productInfo}>
+                <h4 style={productName}>{p.name}</h4>
+                <p style={price}>₹ {p.price}</p>
               </div>
             </div>
           ))}
         </div>
       ))}
     </div>
-  );
+  </div>
+);
 }
 
 export default Orders;
 
 const page = {
-  padding: "20px",
-  background: "#f8fafc",
+  padding: "30px",
+  background: "#f1f5f9",
   minHeight: "100vh"
 };
 
-const card = {
-  display: "flex",
-  gap: "20px",
-  padding: "15px",
-  background: "white",
-  borderRadius: "10px",
-  marginBottom: "15px",
-  boxShadow: "0 2px 10px rgba(0,0,0,0.1)"
+const title = {
+  textAlign: "center",
+  marginBottom: "30px",
+  color: "#0f172a",
+  fontSize: "30px",
+  fontWeight: "bold"
+};
+
+const ordersContainer = {
+  maxWidth: "900px",
+  margin: "0 auto"
 };
 
 const orderCard = {
-  background: "white",
+  background: "#ffffff",
   padding: "20px",
-  borderRadius: "10px",
-  marginBottom: "20px"
+  borderRadius: "12px",
+  marginBottom: "25px",
+  boxShadow: "0 2px 10px rgba(0,0,0,0.08)"
+};
+
+const orderHeader = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center"
+};
+
+const divider = {
+  height: "1px",
+  background: "#e5e7eb",
+  margin: "15px 0"
 };
 
 const productRow = {
   display: "flex",
-  gap: "10px",
-  marginTop: "10px"
+  alignItems: "center",
+  gap: "15px",
+  padding: "10px 0"
 };
 
-const img = {
-  width: "120px",
-  borderRadius: "8px"
+const imgContainer = {
+  paddingRight: "10px",
+  borderRight: "1px solid #e5e7eb"
 };
 
 const imgSmall = {
   width: "60px",
-  borderRadius: "6px"
+  height: "60px",
+  objectFit: "cover",
+  borderRadius: "8px"
 };
 
-const primaryBtn = {
-  padding: "10px",
-  background: "#22c55e",
-  color: "white",
-  border: "none",
-  borderRadius: "6px",
-  cursor: "pointer"
+const productInfo = {
+  paddingLeft: "10px"
+};
+
+const productName = {
+  margin: 0,
+  fontSize: "16px",
+  color: "#0f172a"
+};
+
+const price = {
+  margin: "5px 0 0",
+  color: "#374151",
+  fontWeight: "500"
 };
 
 const dangerBtn = {
-  padding: "8px",
+  padding: "8px 14px",
   background: "#ef4444",
   color: "white",
   border: "none",
   borderRadius: "6px",
-  cursor: "pointer"
-};
-
-const authPage = {
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  height: "100vh",
-  background: "#0f172a"
-};
-
-const authCard = {
-  background: "white",
-  padding: "30px",
-  borderRadius: "10px",
-  width: "300px",
-  textAlign: "center"
-};
-
-const input = {
-  width: "100%",
-  padding: "10px",
-  margin: "10px 0",
-  borderRadius: "6px",
-  border: "1px solid #ccc"
+  cursor: "pointer",
+  fontWeight: "500"
 };

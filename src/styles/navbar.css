@@ -1,0 +1,98 @@
+/* ===== NAVBAR CONTAINER ===== */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 14px 30px;
+  background: #0f172a; /* dark premium */
+  color: white;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: #0f172a;
+}
+
+
+
+
+/* ===== LOGO ===== */
+.logo2 {
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: 0.2s;
+  color: white
+}
+
+.logo2:hover {
+  opacity: 0.85;
+}
+
+/* ===== NAV LINKS CONTAINER ===== */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ===== BUTTON BASE ===== */
+.nav-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+
+  background: #1e293b;
+  color: #e2e8f0;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* ===== HOVER EFFECT ===== */
+.nav-btn:hover {
+  background: #334155;
+  transform: translateY(-1px);
+}
+
+/* ===== REGISTER BUTTON ===== */
+.nav-btn.outline {
+  background: transparent;
+  border: 1px solid #475569;
+}
+
+.nav-btn.outline:hover {
+  background: #1e293b;
+}
+
+/* ===== LOGOUT BUTTON ===== */
+.nav-btn.logout {
+  background: #ef4444;
+  color: white;
+}
+
+.nav-btn.logout:hover {
+  background: #dc2626;
+}
+
+/* ===== RESPONSIVE (optional but clean) ===== */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .nav-links {
+    flex-wrap: wrap;
+  }
+}
+

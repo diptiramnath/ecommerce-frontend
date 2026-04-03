@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getProductsByCategory, addToCart, deleteProduct, getCart } from "../services/api";
 import { useNavigate } from "react-router-dom";
+import "../styles/home.css";
 
 function Home() {
   const [products, setProducts] = useState([]);
@@ -12,7 +13,9 @@ function Home() {
   const [categoryInput, setCategoryInput] = useState("");
   const [description, setDescriptionInput] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+
   const [search, setSearch] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
@@ -37,7 +40,6 @@ function Home() {
 
   const handleAddToCart = async (product) => {
     await addToCart(userId, product);
-    alert("Added to cart");
     loadCartCount();
   };
 
@@ -47,70 +49,89 @@ function Home() {
   };
 
   const handleAddProduct = async () => {
-    const cat = categoryInput.toLowerCase();
-    let imagePath = imageUrl;
-
-    if (!imageUrl) {
-      if (cat === "laptop") imagePath = "/images/dell.jpg";
-      if (cat === "phone") imagePath = "/images/iphone.jpg";
-      if (cat === "tablet") imagePath = "/images/ipad.jpg";
-      if (cat === "accessories") imagePath = "/images/airpods.jpg";
-    }
-
     await fetch("http://localhost:8080/products", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         name,
         price: Number(price),
-        category: cat,
+        category: categoryInput.toLowerCase(),
         description,
         stock: 10,
-        imageUrl: imagePath
+        imageUrl
       })
     });
 
-    setName(""); setPrice(""); setCategoryInput(""); setImageUrl(""); setDescriptionInput("");
-    setCategory(cat);
+    setName("");
+    setPrice("");
+    setCategoryInput("");
+    setImageUrl("");
+    setDescriptionInput("");
+
+    loadProducts(categoryInput);
   };
 
   const filteredProducts = products.filter(p =>
-    p.name.toLowerCase().includes(search.toLowerCase())
-  );
+  p.name.toLowerCase().includes(search.toLowerCase()) ||
+  p.description.toLowerCase().includes(search.toLowerCase())
+);
 
   return (
-    <div style={pageStyle}>
+    <div className="home-container">
 
       {/* HEADER */}
-      <div style={header}>
-        <h1 style={{ fontWeight: "bold" }}>🛒 ShopSphere</h1>
+      <div className="home-header">
+        <h2 className="logo">🛒 Arvind's kutty kadai</h2>
 
-        <input
-          placeholder="Search products..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={searchBar}
-        />
+        <div className="search-container">
+          <input
+            className="search-input"
+            placeholder="Search products..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <span className="search-icon">🔍</span>
+        </div>
 
-        <div style={{ display: "flex", gap: "10px" }}>
-          <button onClick={() => navigate("/cart")} style={btn}>Cart ({cartCount})</button>
-          <button onClick={() => navigate("/orders")} style={btn}>Orders</button>
-          <button onClick={() => { localStorage.clear(); navigate("/login"); }} style={logoutBtn}>Logout</button>
+        <div className="nav-buttons">
+          {role !== "ADMIN" && (
+            <button onClick={() => navigate("/cart")} className="btn">
+              Cart ({cartCount})
+            </button>
+          )}
+          <button onClick={() => navigate("/orders")} className="btn">Orders</button>
+          <button onClick={() => {
+            localStorage.clear();
+            navigate("/login");
+          }} className="btn logout">Logout</button>
         </div>
       </div>
 
-      <div style={mainContainer}>
+      {/* ADMIN */}
+      {role === "ADMIN" && (
+        <div className="admin-box">
+          <h3>Add Product</h3>
+
+          <div className="admin-row">
+            <input placeholder="Name" value={name} onChange={e => setName(e.target.value)} />
+            <input placeholder="Price" value={price} onChange={e => setPrice(e.target.value)} />
+            <input placeholder="Category" value={categoryInput} onChange={e => setCategoryInput(e.target.value)} />
+            <input placeholder="Description" value={description} onChange={e => setDescriptionInput(e.target.value)} />
+            <input placeholder="Image URL" value={imageUrl} onChange={e => setImageUrl(e.target.value)} />
+            <button onClick={handleAddProduct}>Add</button>
+          </div>
+        </div>
+      )}
+
+      <div className="main-content">
 
         {/* SIDEBAR */}
-        <div style={sidebar}>
+        <div className="sidebar">
           <h3>Categories</h3>
           {categories.map(cat => (
-            <div key={cat} style={{
-              padding: "8px",
-              cursor: "pointer",
-              background: category === cat ? "#e2e8f0" : "transparent",
-              borderRadius: "6px"
-            }}
+            <div
+              key={cat}
+              className={`category ${category === cat ? "active" : ""}`}
               onClick={() => setCategory(cat)}
             >
               {cat}
@@ -118,155 +139,91 @@ function Home() {
           ))}
         </div>
 
-        {/* CONTENT */}
-        <div style={content}>
-
-          {/* ADMIN FORM */}
-          {role === "ADMIN" && (
-            <div style={formBox}>
-              <h3>Add Product</h3>
-              <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-                <input placeholder="Name" value={name} onChange={e => setName(e.target.value)} style={input}/>
-                <input placeholder="Price" value={price} onChange={e => setPrice(e.target.value)} style={input}/>
-                <input placeholder="Category" value={categoryInput} onChange={e => setCategoryInput(e.target.value)} style={input}/>
-                <input placeholder="Description" value={description} onChange={e => setDescriptionInput(e.target.value)} style={input}/>
-                <input placeholder="Image URL" value={imageUrl} onChange={e => setImageUrl(e.target.value)} style={input}/>
-              </div>
-              <button onClick={handleAddProduct} style={addBtn}>Add</button>
-            </div>
-          )}
-
-          {/* PRODUCTS GRID */}
-          <div style={grid}>
+        {/* PRODUCTS */}
+        <div className="products-section">
+          <div className="product-grid">
             {filteredProducts.map(p => (
-              <div key={p.id} style={card}>
-                <img src={p.imageUrl || "/images/dell.jpg"} style={img} />
+              <div
+                key={p.id}
+                className="product-card"
+                onClick={() => setSelectedProduct(p)}
+              >
+                <img src={p.imageUrl || "/images/dell.jpg"} />
+
                 <h3>{p.name}</h3>
-                <p style={{ color: "#64748b" }}>{p.description}</p>
-                <h2>₹ {p.price}</h2>
+                <p className="desc">{p.description}</p>
+                <p className="price">₹ {p.price}</p>
 
                 {role !== "ADMIN" ? (
-                  <button onClick={() => handleAddToCart(p)} style={addBtn}>
+                  <button
+                    className="add-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleAddToCart(p);
+                    }}
+                  >
                     Add to Cart
                   </button>
                 ) : (
-                  <button onClick={() => handleDelete(p.id)} style={deleteBtn}>
+                  <button
+                    className="delete-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(p.id);
+                    }}
+                  >
                     Delete
                   </button>
                 )}
               </div>
             ))}
           </div>
-
         </div>
       </div>
+
+      {/* 🔥 MODAL (ONLY IMPROVED UI, NO LOGIC CHANGE) */}
+      {selectedProduct && (
+        <div className="modal-overlay" onClick={() => setSelectedProduct(null)}>
+          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+
+            <div className="modal-header">
+              <h2>🛍 Product Details</h2>
+            </div>
+
+            <img
+              src={selectedProduct.imageUrl || "/images/dell.jpg"}
+              className="modal-image"
+            />
+
+            <h2 className="modal-title">{selectedProduct.name}</h2>
+
+            <p className="modal-desc">
+              {selectedProduct.description || "No description available"}
+            </p>
+
+            <h3 className="modal-price">₹ {selectedProduct.price}</h3>
+
+            {role !== "ADMIN" && (
+              <button
+                className="add-btn"
+                onClick={() => handleAddToCart(selectedProduct)}
+              >
+                Add to Cart
+              </button>
+            )}
+
+            <button
+              className="modal-close"
+              onClick={() => setSelectedProduct(null)}
+            >
+              Close
+            </button>
+
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 export default Home;
-
-/* 🎨 STYLES */
-
-const pageStyle = {
-  fontFamily: "Arial",
-  background: "#f8fafc",
-  minHeight: "100vh"
-};
-
-const header = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  padding: "15px 30px",
-  background: "white",
-  borderBottom: "1px solid #ddd"
-};
-
-const searchBar = {
-  padding: "8px",
-  width: "300px",
-  borderRadius: "6px",
-  border: "1px solid #ccc"
-};
-
-const mainContainer = {
-  display: "flex"
-};
-
-const sidebar = {
-  width: "200px",
-  background: "white",
-  padding: "20px",
-  borderRight: "1px solid #ddd"
-};
-
-const content = {
-  flex: 1,
-  padding: "20px"
-};
-
-const grid = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-  gap: "20px"
-};
-
-const card = {
-  background: "white",
-  padding: "15px",
-  borderRadius: "10px",
-  boxShadow: "0 2px 10px rgba(0,0,0,0.1)"
-};
-
-const img = {
-  width: "100%",
-  height: "180px",
-  objectFit: "cover",
-  borderRadius: "8px"
-};
-
-const btn = {
-  padding: "8px 12px",
-  border: "none",
-  background: "#334155",
-  color: "white",
-  borderRadius: "6px",
-  cursor: "pointer"
-};
-
-const logoutBtn = {
-  ...btn,
-  background: "#ef4444"
-};
-
-const addBtn = {
-  padding: "10px",
-  background: "#22c55e",
-  color: "white",
-  border: "none",
-  borderRadius: "6px",
-  cursor: "pointer"
-};
-
-const deleteBtn = {
-  padding: "10px",
-  background: "#ef4444",
-  color: "white",
-  border: "none",
-  borderRadius: "6px",
-  cursor: "pointer"
-};
-
-const input = {
-  padding: "8px",
-  border: "1px solid #ccc",
-  borderRadius: "6px"
-};
-
-const formBox = {
-  marginBottom: "20px",
-  padding: "15px",
-  background: "white",
-  borderRadius: "10px"
-};

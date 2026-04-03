@@ -129,3 +129,10 @@ export const deleteOrder = async (orderId) => {
 
   return res.text();
 };
+
+export const updateQuantity = (userId, productId, quantity) => {
+  return fetch(
+    `http://localhost:8080/cart/update?userId=${userId}&productId=${productId}&quantity=${quantity}`,
+    { method: "PUT" }
+  ).then(res => res.json());
+};

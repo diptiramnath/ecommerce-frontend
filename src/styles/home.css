@@ -1,0 +1,365 @@
+/* GLOBAL */
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: #f5f7fa;
+  color: #111;
+}
+
+/* HEADER */
+.home-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 30px;
+  background: white;
+  border-bottom: 1px solid #ddd;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+  color: #111
+}
+
+/* SEARCH BAR */
+.search-container {
+  position: relative;
+  width: 400px;
+  background: white;        /* make container white */
+  border: 2px solid black;  /* black outline */
+  border-radius: 25px;
+  color:#111;
+}
+
+/* remove border from input so container controls it */
+.search-input {
+  width: 100%;
+  padding: 12px 45px 12px 15px;
+  border: none;             /* remove inner border */
+  outline: none;
+  font-size: 14px;
+  border-radius: 25px;
+  background: transparent;  /* blend with container */
+  color:#111
+}
+
+.search-input:focus {
+  outline: none;
+}
+
+.search-icon {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  font-size: 18px;
+}
+
+/* NAV BUTTONS */
+.nav-buttons .btn {
+  margin-left: 10px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  background: #334155;
+  color: white;
+  cursor: pointer;
+}
+
+.logout {
+  background: #ef4444;
+}
+
+/* ADMIN BOX */
+.admin-box {
+  margin: 20px;
+  padding: 20px;
+  background: white;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+}
+
+.admin-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* FIX INPUT VISIBILITY */
+.admin-box input {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: white;
+  color: black;
+  min-width: 150px;
+}
+
+.admin-box button {
+  background: #22c55e;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* MAIN LAYOUT */
+.main-content {
+  display: flex;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 220px;
+  padding: 20px;
+  background: white;
+  border-right: 2px solid #ddd;
+}
+
+.sidebar h3 {
+  margin-bottom: 15px;
+}
+
+.category {
+  padding: 12px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  transition: 0.2s;
+}
+
+.category:hover {
+  background: #e2e8f0;
+}
+
+.category.active {
+  border: 2px solid #111;
+  font-weight: bold;
+}
+
+/* PRODUCTS */
+.products-section {
+  flex: 1;
+  padding: 20px;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 20px;
+}
+
+/* PRODUCT CARD */
+.product-card {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.product-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+/* IMAGE FIX */
+.product-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: contain;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+/* TEXT */
+.product-card h3 {
+  margin: 5px 0;
+  font-size: 18px;
+  color: #111;
+}
+
+.desc {
+  font-size: 14px;
+  color: #555;
+}
+
+.price {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+/* BUTTONS */
+.add-btn {
+  background: #22c55e;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.delete-btn {
+  background: #ef4444;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ========================= */
+/* 🔥 MODAL (FIXED PROFESSIONAL) */
+/* ========================= */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-box {
+  background: white;
+  width: 420px;
+  padding: 25px;
+  border-radius: 12px;
+  text-align: center;
+  border: 2px solid #ddd;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+  animation: pop 0.2s ease;
+}
+
+/* HEADER */
+.modal-header {
+  border-bottom: 1px solid #eee;
+  margin-bottom: 15px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #1e293b;
+}
+
+/* IMAGE */
+.modal-image {
+  width: 100%;
+  height: 200px;
+  object-fit: contain;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+/* TEXT */
+.modal-title {
+  font-size: 22px;
+  font-weight: bold;
+  color: #111;
+}
+
+.modal-desc {
+  color: #555;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.modal-price {
+  color: #16a34a;
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+/* BUTTON */
+.modal-close {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  background: #dc2626;
+}
+
+/* ANIMATION */
+@keyframes pop {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ===== MODAL FIX ===== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-box {
+  background: white;
+  width: 420px;
+  padding: 25px;
+  border-radius: 12px;
+  border: 2px solid #ddd;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+  text-align: center;
+}
+
+.modal-header {
+  border-bottom: 1px solid #eee;
+  margin-bottom: 15px;
+}
+
+.modal-title {
+  color: #111;
+  font-size: 22px;
+}
+
+.modal-desc {
+  color: #555;
+}
+
+.modal-price {
+  color: green;
+  font-size: 20px;
+}
+
+.modal-image {
+  width: 100%;
+  height: 200px;
+  object-fit: contain;
+}
+
+.modal-close {
+  background: red;
+  color: white;
+  padding: 10px;
+  border: none;
+}
