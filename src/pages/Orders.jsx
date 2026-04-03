@@ -3,173 +3,124 @@ import { getOrders, deleteOrder } from "../services/api";
 
 function Orders() {
   const [orders, setOrders] = useState([]);
-
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
-    loadOrders();
+    getOrders(userId).then(setOrders);
   }, []);
 
-  const loadOrders = () => {
-    getOrders(userId).then((data) => {
-      console.log("📦 Orders:", data);
-      setOrders(data);
+  const handleDelete = (id) => {
+    deleteOrder(id).then(() => {
+      setOrders(prev => prev.filter(o => (o.id || o._id) !== id));
     });
-  };
-
-  const handleDelete = (orderId) => {
-    deleteOrder(orderId).then(() => {
-      alert("✅ Order deleted");
-
-      setOrders(prev =>
-        prev.filter(o => (o.id || o._id) !== orderId)
-      );
-    });
-  };
-
-  const calculateTotal = (products) => {
-    return products.reduce(
-      (sum, p) => sum + p.price * p.quantity,
-      0
-    );
-  };
-
-  // 🔥 IMAGE FALLBACK BASED ON NAME
-  const getImage = (p) => {
-    if (p.imageUrl && p.imageUrl !== "") return p.imageUrl;
-
-    const name = p.name.toLowerCase();
-
-    if (name.includes("hp")) return "/images/hp.jpg";
-    if (name.includes("dell")) return "/images/dell.jpg";
-    if (name.includes("mac")) return "/images/macbook.jpg";
-    if (name.includes("vivo")) return "/images/vivobook.jpg";
-
-    if (name.includes("iphone")) return "/images/iphone.jpg";
-    if (name.includes("samsung")) return "/images/samsung.jpg";
-    if (name.includes("redmi")) return "/images/redmi.jpg";
-
-    if (name.includes("ipad")) return "/images/ipad.jpg";
-    if (name.includes("tab")) return "/images/samsungtab.jpg";
-
-    if (name.includes("airpods")) return "/images/airpods.jpg";
-    if (name.includes("sony")) return "/images/sony.jpg";
-
-    return "/images/dell.jpg";
   };
 
   return (
-    <div style={pageStyle}>
+    <div style={page}>
       <h1 style={{ textAlign: "center" }}>📦 Your Orders</h1>
 
-      {orders.length === 0 && (
-        <p style={{ textAlign: "center" }}>No orders yet</p>
-      )}
+      {orders.map((order, i) => (
+        <div key={i} style={orderCard}>
+          <h3>Order #{i + 1}</h3>
 
-      {orders.map((order, index) => {
-        const orderId = order.id || order._id;
+          <button onClick={() => handleDelete(order.id || order._id)} style={dangerBtn}>
+            Delete
+          </button>
 
-        return (
-          <div key={orderId} style={orderCard}>
-
-            {/* HEADER */}
-            <div style={orderHeader}>
-              <h3>Order #{index + 1}</h3>
-
-              <button
-                onClick={() => handleDelete(orderId)}
-                style={deleteBtn}
-              >
-                Delete
-              </button>
+          {order.products.map((p, j) => (
+            <div key={j} style={productRow}>
+              <img src={p.imageUrl} style={imgSmall} />
+              <div>
+                <h4>{p.name}</h4>
+                <p>₹ {p.price}</p>
+              </div>
             </div>
-
-            {/* PRODUCTS */}
-            <div style={productGrid}>
-              {order.products.map((p, i) => (
-                <div key={i} style={productCard}>
-                  
-                  {/* 🔥 IMAGE */}
-                  <img
-                    src={getImage(p)}
-                    alt={p.name}
-                    style={imageStyle}
-                    onError={(e) => {
-                      e.target.src = "/images/dell.jpg";
-                    }}
-                  />
-
-                  <h4>{p.name}</h4>
-                  <p>₹ {p.price}</p>
-                  <p>Qty: {p.quantity}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* TOTAL */}
-            <h3 style={{ marginTop: "15px" }}>
-              Total: ₹ {calculateTotal(order.products)}
-            </h3>
-          </div>
-        );
-      })}
+          ))}
+        </div>
+      ))}
     </div>
   );
 }
 
-// 🎨 STYLES
+export default Orders;
 
-const pageStyle = {
+const page = {
   padding: "20px",
-  background: "#0f172a",
-  minHeight: "100vh",
-  color: "white"
+  background: "#f8fafc",
+  minHeight: "100vh"
+};
+
+const card = {
+  display: "flex",
+  gap: "20px",
+  padding: "15px",
+  background: "white",
+  borderRadius: "10px",
+  marginBottom: "15px",
+  boxShadow: "0 2px 10px rgba(0,0,0,0.1)"
 };
 
 const orderCard = {
-  background: "#1e293b",
+  background: "white",
   padding: "20px",
-  marginBottom: "25px",
-  borderRadius: "12px",
-  boxShadow: "0 4px 10px rgba(0,0,0,0.4)"
+  borderRadius: "10px",
+  marginBottom: "20px"
 };
 
-const orderHeader = {
+const productRow = {
   display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center"
+  gap: "10px",
+  marginTop: "10px"
 };
 
-const deleteBtn = {
-  background: "#ef4444",
+const img = {
+  width: "120px",
+  borderRadius: "8px"
+};
+
+const imgSmall = {
+  width: "60px",
+  borderRadius: "6px"
+};
+
+const primaryBtn = {
+  padding: "10px",
+  background: "#22c55e",
   color: "white",
   border: "none",
-  padding: "8px 14px",
   borderRadius: "6px",
   cursor: "pointer"
 };
 
-const productGrid = {
-  display: "flex",
-  gap: "15px",
-  flexWrap: "wrap",
-  marginTop: "15px"
+const dangerBtn = {
+  padding: "8px",
+  background: "#ef4444",
+  color: "white",
+  border: "none",
+  borderRadius: "6px",
+  cursor: "pointer"
 };
 
-const productCard = {
-  background: "#334155",
-  padding: "10px",
+const authPage = {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  height: "100vh",
+  background: "#0f172a"
+};
+
+const authCard = {
+  background: "white",
+  padding: "30px",
   borderRadius: "10px",
-  width: "150px",
+  width: "300px",
   textAlign: "center"
 };
 
-const imageStyle = {
+const input = {
   width: "100%",
-  height: "100px",
-  objectFit: "cover",
-  borderRadius: "8px",
-  marginBottom: "10px"
+  padding: "10px",
+  margin: "10px 0",
+  borderRadius: "6px",
+  border: "1px solid #ccc"
 };
-
-export default Orders;

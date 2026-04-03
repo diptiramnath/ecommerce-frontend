@@ -10,124 +10,43 @@ function Cart() {
   }, []);
 
   const loadCart = () => {
-    getCart(userId).then((data) => {
-      console.log("🛒 CART DATA:", data); // DEBUG
-      setCart(data);
-    });
+    getCart(userId).then(setCart);
   };
 
   const handleRemove = (productId) => {
     removeFromCart(userId, productId).then(loadCart);
   };
 
-  const handleOrder = () => {
-    placeOrder(userId).then(() => {
-      alert("Order placed!");
-      loadCart();
-    });
+  const handleOrder = async () => {
+    await placeOrder(userId);
+    alert("Order placed");
+    loadCart();
   };
 
-  // 🔥 FALLBACK IMAGE LOGIC
-  const getFallbackImage = (name) => {
-    const n = name?.toLowerCase() || "";
-
-    if (n.includes("hp")) return "/images/hp.jpg";
-    if (n.includes("dell")) return "/images/dell.jpg";
-    if (n.includes("vivo")) return "/images/vivobook.jpg";
-    if (n.includes("mac")) return "/images/macbook.jpg";
-
-    if (n.includes("iphone")) return "/images/iphone.jpg";
-    if (n.includes("samsung")) return "/images/samsung.jpg";
-    if (n.includes("redmi")) return "/images/redmi.jpg";
-
-    if (n.includes("ipad")) return "/images/ipad.jpg";
-
-    if (n.includes("airpods")) return "/images/airpods.jpg";
-    if (n.includes("sony")) return "/images/sony.jpg";
-
-    return "/images/dell.jpg";
-  };
-
-  if (!cart || !cart.products || cart.products.length === 0) {
-    return (
-      <div style={{ padding: "20px", color: "white" }}>
-        <h2>Cart is empty</h2>
-      </div>
-    );
-  }
-
-  const total = cart.products.reduce(
-    (sum, p) => sum + p.price * p.quantity,
-    0
-  );
+  const total = cart?.products?.reduce((sum, p) => sum + p.price * p.quantity, 0);
 
   return (
-    <div style={{ padding: "20px", color: "white" }}>
-      <h1>Your Cart</h1>
+    <div style={page}>
+      <h1 style={{ textAlign: "center" }}>🛒 Your Cart</h1>
 
-      {cart.products.map((p) => (
-        <div
-          key={p.productId}
-          style={{
-            background: "#1e293b",
-            padding: "15px",
-            marginBottom: "15px",
-            borderRadius: "10px",
-            textAlign: "center"
-          }}
-        >
-          {/* 🔥 FIXED IMAGE */}
-          <img
-            src={
-              p.imageUrl && p.imageUrl !== ""
-                ? p.imageUrl
-                : getFallbackImage(p.name)
-            }
-            alt={p.name}
-            style={{
-              width: "120px",
-              height: "100px",
-              objectFit: "cover",
-              borderRadius: "10px",
-              marginBottom: "10px"
-            }}
-            onError={(e) => {
-              e.target.src = "/images/dell.jpg";
-            }}
-          />
+      {cart?.products?.map(p => (
+        <div key={p.productId} style={card}>
+          <img src={p.imageUrl} style={img} />
 
-          <h3>{p.name}</h3>
-          <p>₹ {p.price}</p>
+          <div>
+            <h3>{p.name}</h3>
+            <p>₹ {p.price}</p>
 
-          <button
-            onClick={() => handleRemove(p.productId)}
-            style={{
-              background: "#ef4444",
-              color: "white",
-              border: "none",
-              padding: "8px 12px",
-              borderRadius: "5px",
-              cursor: "pointer"
-            }}
-          >
-            Remove
-          </button>
+            <button onClick={() => handleRemove(p.productId)} style={dangerBtn}>
+              Remove
+            </button>
+          </div>
         </div>
       ))}
 
       <h2>Total: ₹ {total}</h2>
 
-      <button
-        onClick={handleOrder}
-        style={{
-          background: "#22c55e",
-          color: "white",
-          border: "none",
-          padding: "10px 20px",
-          borderRadius: "6px",
-          cursor: "pointer"
-        }}
-      >
+      <button onClick={handleOrder} style={primaryBtn}>
         Place Order
       </button>
     </div>
@@ -135,3 +54,83 @@ function Cart() {
 }
 
 export default Cart;
+const page = {
+  padding: "20px",
+  background: "#f8fafc",
+  minHeight: "100vh"
+};
+
+const card = {
+  display: "flex",
+  gap: "20px",
+  padding: "15px",
+  background: "white",
+  borderRadius: "10px",
+  marginBottom: "15px",
+  boxShadow: "0 2px 10px rgba(0,0,0,0.1)"
+};
+
+const orderCard = {
+  background: "white",
+  padding: "20px",
+  borderRadius: "10px",
+  marginBottom: "20px"
+};
+
+const productRow = {
+  display: "flex",
+  gap: "10px",
+  marginTop: "10px"
+};
+
+const img = {
+  width: "120px",
+  borderRadius: "8px"
+};
+
+const imgSmall = {
+  width: "60px",
+  borderRadius: "6px"
+};
+
+const primaryBtn = {
+  padding: "10px",
+  background: "#22c55e",
+  color: "white",
+  border: "none",
+  borderRadius: "6px",
+  cursor: "pointer"
+};
+
+const dangerBtn = {
+  padding: "8px",
+  background: "#ef4444",
+  color: "white",
+  border: "none",
+  borderRadius: "6px",
+  cursor: "pointer"
+};
+
+const authPage = {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  height: "100vh",
+  background: "#0f172a"
+};
+
+const authCard = {
+  background: "white",
+  padding: "30px",
+  borderRadius: "10px",
+  width: "300px",
+  textAlign: "center"
+};
+
+const input = {
+  width: "100%",
+  padding: "10px",
+  margin: "10px 0",
+  borderRadius: "6px",
+  border: "1px solid #ccc"
+};
