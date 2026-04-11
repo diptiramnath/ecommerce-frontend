@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
 import { getCart, removeFromCart, placeOrder, updateQuantity } from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 function Cart() {
   const [cart, setCart] = useState(null);
   const userId = localStorage.getItem("userId");
+
+  const navigate = useNavigate();
+
+  
 
   useEffect(() => {
     loadCart();
@@ -18,20 +23,27 @@ function Cart() {
   };
 
   const handleOrder = async () => {
-    await placeOrder(userId);
-    alert("Order placed");
-    loadCart();
-  };
+  const createdOrder = await placeOrder(userId);
 
-  const handleIncrease = (productId, qty) => {
+  // 🔥 ADD THIS
+  navigate("/payment", {
+    state: {
+      orderId: createdOrder.id,   // ⚠️ might be _id (see below)
+      amount: createdOrder.total
+    }
+  });
+};
+
+ const handleIncrease = (productId, qty) => {
+  console.log("INCREASE CLICKED", productId, qty); // 👈 add this
   updateQuantity(userId, productId, qty + 1).then(loadCart);
 };
 
 const handleDecrease = (productId, qty) => {
+  console.log("DECREASE CLICKED", productId, qty); // 👈 add this
   if (qty === 1) return;
   updateQuantity(userId, productId, qty - 1).then(loadCart);
 };
-
   const total = cart?.products?.reduce((sum, p) => sum + p.price * p.quantity, 0);
 
   return (
@@ -42,25 +54,45 @@ const handleDecrease = (productId, qty) => {
       <div style={cartSection}>
         {cart?.products?.map(p => (
           <div key={p.productId} style={card}>
+            
             <div style={imgContainer}>
               <img src={p.imageUrl} style={img} />
             </div>
 
-            <div style={details}>
+            {/* LEFT */}
+            <div style={{ flex: 1 }}>
               <h3 style={productName}>{p.name}</h3>
               <p style={price}>₹ {p.price}</p>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                  <button onClick={() => handleDecrease(p.productId, p.quantity)} style={qtyBtn}>-</button>
+            </div>
 
-                  <span>{p.quantity}</span>
+            {/* RIGHT */}
+            <div style={actions}>
+              <div style={qtyContainer}>
+                <button 
+                  onClick={() => handleDecrease(p.productId, p.quantity)} 
+                  style={qtyBtn}
+                >
+                  −
+                </button>
 
-                  <button onClick={() => handleIncrease(p.productId, p.quantity)} style={qtyBtn}>+</button>
+                <span style={qtyText}>{p.quantity}</span>
+
+                <button 
+                  onClick={() => handleIncrease(p.productId, p.quantity)} 
+                  style={qtyBtn}
+                >
+                  +
+                </button>
               </div>
 
-              <button onClick={() => handleRemove(p.productId)} style={dangerBtn}>
+              <button 
+                onClick={() => handleRemove(p.productId)} 
+                style={dangerBtn}
+              >
                 Remove
               </button>
             </div>
+
           </div>
         ))}
       </div>
@@ -184,10 +216,35 @@ const imgContainer = {
   borderRight: "1px solid #e5e7eb" // subtle divider like your UI
 };
 
+const qtyContainer = {
+  display: "flex",
+  alignItems: "center",
+  border: "1px solid #e5e7eb",
+  borderRadius: "6px",
+  overflow: "hidden",
+  width: "fit-content"
+};
+
 const qtyBtn = {
-  padding: "5px 10px",
-  border: "1px solid #ccc",
-  background: "white",
+  padding: "6px 12px",
+  border: "none",
+  background: "#216cb7",
+  borderRadius: "4px",
   cursor: "pointer",
-  borderRadius: "4px"
+  fontSize: "16px",
+  fontWeight: "bold"
+};
+
+const qtyText = {
+  padding: "6px 12px",
+  minWidth: "20px",
+  textAlign: "center",
+  fontWeight: "500"
+};
+
+const actions = {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-end",
+  gap: "10px"
 };

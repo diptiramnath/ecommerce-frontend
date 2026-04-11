@@ -13,6 +13,7 @@ function Home() {
   const [categoryInput, setCategoryInput] = useState("");
   const [description, setDescriptionInput] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  
 
   const [search, setSearch] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);

@@ -36,7 +36,10 @@ function Orders() {
 
           <div style={divider}></div>
 
-          {order.products.map((p, j) => (
+            {/* 🔥 ADD THIS HERE */}
+            <p><b>Payment Status:</b> {order.paymentStatus}</p>
+
+            {order.products.map((p, j) => (
             <div key={j} style={productRow}>
               <div style={imgContainer}>
                 <img src={p.imageUrl} style={imgSmall} />
