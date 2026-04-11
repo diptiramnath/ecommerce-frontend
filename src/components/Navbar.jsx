@@ -14,12 +14,7 @@ function Navbar() {
     window.location.href = "/login";
   };
 
-  const navbar = {
-  position: "sticky",
-  top: 0,
-  zIndex: 1000,
-  background: "#0f172a" // or your navbar color
-};
+  
 
   return (
     <div className="navbar">
